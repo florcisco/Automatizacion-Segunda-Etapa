@@ -2644,6 +2644,13 @@ def procesar(
     alumnos_libres = 0
     alumnos_excedidos = 0
 
+    # ========================================================
+    # NUEVO:
+    # ALUMNOS CON INAS NEGATIVO
+    # ========================================================
+
+    diferencias_inasistencias = []
+
     total_filas = max(
         1,
         ws_reporte.max_row - 10
@@ -2809,6 +2816,34 @@ def procesar(
             fila,
             9
         ).value = None
+
+        # ====================================================
+        # NUEVO:
+        # CONTROLAR INAS NEGATIVO
+        # ====================================================
+
+        if float(diferencia) < 0:
+
+            nombre_original = (
+                ws_reporte.cell(
+                    fila,
+                    1
+                ).value
+            )
+
+            diferencias_inasistencias.append(
+                {
+                    "alumno": nombre_original,
+                    "faltas_inas": numero_limpio(
+                        faltas_1
+                    ),
+                    "faltas_inas2": numero_limpio(
+                        faltas_2
+                    )
+                }
+            )
+
+        # ====================================================
 
         if (
             prm2 is not None
@@ -3124,6 +3159,115 @@ def procesar(
             ]
 
             fila_dni += 1
+
+    # ========================================================
+    # NUEVO:
+    # CONTROL DE INASISTENCIAS
+    # ========================================================
+
+    fila_inicio_inas_obs = fila_dni + 2
+
+    ws_obs.cell(
+        fila_inicio_inas_obs,
+        1
+    ).value = "CONTROL DE INASISTENCIAS"
+
+    ws_obs.cell(
+        fila_inicio_inas_obs,
+        1
+    ).font = Font(
+        name="Arial",
+        size=12,
+        bold=True
+    )
+
+    fila_inas_obs = (
+        fila_inicio_inas_obs + 2
+    )
+
+    # --------------------------------------------------------
+    # SIN INAS NEGATIVOS
+    # --------------------------------------------------------
+
+    if not diferencias_inasistencias:
+
+        ws_obs.cell(
+            fila_inas_obs,
+            1
+        ).value = (
+            "MATERIA SIN CAMBIOS"
+        )
+
+        ws_obs.cell(
+            fila_inas_obs,
+            1
+        ).font = Font(
+            name="Arial",
+            size=10,
+            bold=True
+        )
+
+    # --------------------------------------------------------
+    # CON INAS NEGATIVOS
+    # --------------------------------------------------------
+
+    else:
+
+        ws_obs.cell(
+            fila_inas_obs,
+            1
+        ).value = "ALUMNO"
+
+        ws_obs.cell(
+            fila_inas_obs,
+            2
+        ).value = "FALTAS EN INAS"
+
+        ws_obs.cell(
+            fila_inas_obs,
+            3
+        ).value = "FALTAS EN INAS2"
+
+        for columna in range(
+            1,
+            4
+        ):
+
+            ws_obs.cell(
+                fila_inas_obs,
+                columna
+            ).font = Font(
+                name="Arial",
+                size=10,
+                bold=True
+            )
+
+        fila_inas_obs += 1
+
+        for diferencia in diferencias_inasistencias:
+
+            ws_obs.cell(
+                fila_inas_obs,
+                1
+            ).value = diferencia[
+                "alumno"
+            ]
+
+            ws_obs.cell(
+                fila_inas_obs,
+                2
+            ).value = diferencia[
+                "faltas_inas"
+            ]
+
+            ws_obs.cell(
+                fila_inas_obs,
+                3
+            ).value = diferencia[
+                "faltas_inas2"
+            ]
+
+            fila_inas_obs += 1
 
     # ========================================================
     # ANCHOS OBS
