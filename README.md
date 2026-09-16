@@ -1,6 +1,6 @@
-# Automatización para el Cálculo de Recuperatorios
+# Automatización para el Cálculo de Condiciones de Segunda Etapa
 
-Herramienta desarrollada en Python para automatizar el procesamiento y cálculo de recuperatorios a partir de archivos académicos en formato Excel.
+Herramienta desarrollada en Python para automatizar el procesamiento y cálculo de condiciones para rendir el segundo parcial, incluyendo notas e inasistencias
 
 El programa permite reducir tareas manuales y repetitivas, centralizando el procesamiento de información, la validación de datos y la generación de reportes.
 
